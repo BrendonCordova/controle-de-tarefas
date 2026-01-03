@@ -23,8 +23,8 @@ def opcoes():
     print('5 - Sair')
 
 def criar_tarefa():
-    titulo = input('Digite o título da sua tarefa: ')
-    status = input('Digite o status da sua tarefa (pendente / concluída): ')
+    titulo = input('Digite o título da sua tarefa: ').strip()
+    status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
     nova_tarefa = {'titulo':titulo, 'status':status}
     tarefas.append(nova_tarefa)
     salvar_json()
@@ -44,13 +44,17 @@ def listar_tarefas():
 
     redirecionar_menu()  
 
+def normalizar_caracteres(tarefa):
+    return tarefa.lower().strip()
+
 def alterar_titulo_tarefa():
 
-    nome_tarefa = input('Digite o titulo da tarefa: ')
+    nome_tarefa = input('Digite o titulo da tarefa: ').strip().lower()
     tarefa_encontrada = False
 
     for tarefa in tarefas:
-        if tarefa['titulo'] == nome_tarefa:
+        tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+        if tarefa_normalizada == nome_tarefa:
             tarefa_encontrada = True
             novo_titulo = input('Digite o novo título a tarefa: ')
             tarefa['titulo'] = novo_titulo
@@ -62,12 +66,13 @@ def alterar_titulo_tarefa():
     redirecionar_menu()
 
 def alterar_status_tarefa():
-    nome_tarefa = input('Digite o nome da tarefa que deseja alterar: ')
+    nome_tarefa = input('Digite o nome da tarefa que deseja alterar: ').strip().lower()
     tarefa_encontrada = False
 
     for tarefa in tarefas:
 
-        if tarefa['titulo'] == nome_tarefa:
+        tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+        if tarefa_normalizada == nome_tarefa:
             tarefa_encontrada = True 
             tarefa['status'] = 'concluída' if tarefa['status'] == 'pendente' else 'pendente'
             salvar_json()
