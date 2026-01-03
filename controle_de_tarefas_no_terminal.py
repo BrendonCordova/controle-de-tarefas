@@ -33,7 +33,7 @@ def criar_tarefa():
 
 def listar_tarefas():
 
-    final_opcoes()
+    limpar_terminal()
     print(f'{'Título da Tarefa'.ljust(23)} | {'Status'.ljust(20)}')
 
     for tarefa in tarefas:
@@ -79,14 +79,25 @@ def alterar_status_tarefa():
     redirecionar_menu()
 
 def sair():
-    final_opcoes()
+    limpar_terminal()
     exibir_subtitulo('''
 ▄▀█ █▀█ █▀█   █▀▀ █▄ █ █▀▀ █▀▀ █▀█ █▀█ ▄▀█ █▀▄ █▀█ 
 █▀█ █▀▀ █▀▀   ██▄ █ ▀█ █▄▄ ██▄ █▀▄ █▀▄ █▀█ █▄▀ █▄█ ▄
 ''')
 
 def escolha_opcao():
-    escolha = int(input('Digite um número que corresponda as opções: '))
+
+    while True:
+    
+        try:
+            escolha = int(input('Digite um número que corresponda as opções: '))
+            break
+        except ValueError:
+            limpar_terminal()
+            print('O valor informado está incorreto, por favor, escolha uma das nossas opções em valor númerico.')
+            opcoes()
+
+
     match escolha:
 
         case 1:
@@ -103,8 +114,12 @@ def escolha_opcao():
         
         case 5:
             return sair()
+        
+        case _:
+            print(f'Valor digitado está incorreto, por favor, tente novamente com uma das nossas opções.')
+            redirecionar_menu()
 
-def final_opcoes():
+def limpar_terminal():
     os.system('cls')
 
 def salvar_json():
@@ -118,12 +133,17 @@ def carregar_json():
             tarefas = json.load(arquivo)
     except FileNotFoundError:
         tarefas = []
+
 def main():
    carregar_json()
-   final_opcoes()
+   limpar_terminal()
    exibir_nome()
    opcoes()
    escolha_opcao()
 
 if __name__ == '__main__':
     main()
+
+# def retorno_validacao():      # pensamento sobre futura mudança de lógica
+#     opcoes()
+#     escolha_opcao()
