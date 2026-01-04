@@ -23,13 +23,34 @@ def opcoes():
     print('5 - Sair')
 
 def criar_tarefa():
-    titulo = input('Digite o título da sua tarefa: ').strip()
-    status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
-    nova_tarefa = {'titulo':titulo, 'status':status}
-    tarefas.append(nova_tarefa)
-    salvar_json()
 
-    redirecionar_menu()
+    titulo = input('Digite o título da sua tarefa: ')
+
+    if titulo.strip() == '':
+        print('Não é possível adicionar tarefas sem titulo, por favor, informe um título.')
+        redirecionar_menu()
+
+    else:
+        titulo_normalizado = normalizar_caracteres(titulo)
+        flag_titulo = True
+
+        for tarefa in tarefas:
+            tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+            if tarefa_normalizada == titulo_normalizado:
+                flag_titulo = False
+                break  # deixar mais rápido, caso encontre antes.
+
+        if flag_titulo:
+            status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+            nova_tarefa = {'titulo':titulo, 'status':status}
+            tarefas.append(nova_tarefa)
+            salvar_json()
+        else:
+            limpar_terminal()
+            print('O título da sua tarefa já existe, por favor, informar outro titulo.\nCaso precise revisar as tarefas existentes, aperte a tecla 2 no menu de opções.')
+            redirecionar_menu()
+            
+        redirecionar_menu()
 
 def listar_tarefas():
 
@@ -45,7 +66,7 @@ def listar_tarefas():
     redirecionar_menu()  
 
 def normalizar_caracteres(tarefa):
-    return tarefa.lower().strip()
+    return tarefa.strip().lower()
 
 def alterar_titulo_tarefa():
 
@@ -148,7 +169,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# def retorno_validacao():      # pensamento sobre futura mudança de lógica
-#     opcoes()
-#     escolha_opcao()
