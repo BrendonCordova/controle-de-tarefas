@@ -41,16 +41,57 @@ def criar_tarefa():
                 break  # deixar mais rápido, caso encontre antes.
 
         if flag_titulo:
-            status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+
+            status = input('Digite o status da sua tarefa (pendente / concluida): ').strip().lower()
+
+            while status not in ['pendente','concluida']:
+                print('Status da sua tarefa está incorreto, por favor, escolha um dos dois: (pendente / concluída)')
+                status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+
             nova_tarefa = {'titulo':titulo, 'status':status}
             tarefas.append(nova_tarefa)
             salvar_json()
+
         else:
             limpar_terminal()
             print('O título da sua tarefa já existe, por favor, informar outro titulo.\nCaso precise revisar as tarefas existentes, aperte a tecla 2 no menu de opções.')
             redirecionar_menu()
             
         redirecionar_menu()
+# def criar_tarefa():
+
+#     titulo = input('Digite o título da sua tarefa: ')
+
+#     if titulo.strip() == '':
+#         print('Não é possível adicionar tarefas sem titulo, por favor, informe um título.')
+#         redirecionar_menu()
+
+#     else:
+#         titulo_normalizado = normalizar_caracteres(titulo)
+#         flag_titulo = True
+
+#         for tarefa in tarefas:
+#             tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+#             if tarefa_normalizada == titulo_normalizado:
+#                 flag_titulo = False
+#                 break  # deixar mais rápido, caso encontre antes.
+
+#         if flag_titulo:
+
+#             status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+#             if status == 'pendente' or 'concluida':
+#                 nova_tarefa = {'titulo':titulo, 'status':status}
+#                 tarefas.append(nova_tarefa)
+#                 salvar_json()
+#             else:
+#                 print('Status da sua tarefa está incorreto, por favor, escolha um dos dois: (pendente / concluída)')
+#                 redirecionar_menu() # Mudar a lógica
+#         else:
+#             limpar_terminal()
+#             print('O título da sua tarefa já existe, por favor, informar outro titulo.\nCaso precise revisar as tarefas existentes, aperte a tecla 2 no menu de opções.')
+#             redirecionar_menu()
+            
+#         redirecionar_menu()
 
 def listar_tarefas():
 
