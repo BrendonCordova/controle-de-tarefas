@@ -23,17 +23,79 @@ def opcoes():
     print('5 - Sair')
 
 def criar_tarefa():
-    titulo = input('Digite o título da sua tarefa: ')
-    status = input('Digite o status da sua tarefa (pendente / concluída): ')
-    nova_tarefa = {'titulo':titulo, 'status':status}
-    tarefas.append(nova_tarefa)
-    salvar_json()
 
-    redirecionar_menu()
+    titulo = input('Digite o título da sua tarefa: ')
+
+    if titulo.strip() == '':
+        print('Não é possível adicionar tarefas sem titulo, por favor, informe um título.')
+        redirecionar_menu()
+
+    else:
+        titulo_normalizado = normalizar_caracteres(titulo)
+        flag_titulo = True
+
+        for tarefa in tarefas:
+            tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+            if tarefa_normalizada == titulo_normalizado:
+                flag_titulo = False
+                break  # deixar mais rápido, caso encontre antes.
+
+        if flag_titulo:
+
+            status = input('Digite o status da sua tarefa (pendente / concluida): ').strip().lower()
+
+            while status not in ['pendente','concluida']:
+                print('Status da sua tarefa está incorreto, por favor, escolha um dos dois: (pendente / concluída)')
+                status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+
+            nova_tarefa = {'titulo':titulo, 'status':status}
+            tarefas.append(nova_tarefa)
+            salvar_json()
+
+        else:
+            limpar_terminal()
+            print('O título da sua tarefa já existe, por favor, informar outro titulo.\nCaso precise revisar as tarefas existentes, aperte a tecla 2 no menu de opções.')
+            redirecionar_menu()
+            
+        redirecionar_menu()
+# def criar_tarefa():
+
+#     titulo = input('Digite o título da sua tarefa: ')
+
+#     if titulo.strip() == '':
+#         print('Não é possível adicionar tarefas sem titulo, por favor, informe um título.')
+#         redirecionar_menu()
+
+#     else:
+#         titulo_normalizado = normalizar_caracteres(titulo)
+#         flag_titulo = True
+
+#         for tarefa in tarefas:
+#             tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+#             if tarefa_normalizada == titulo_normalizado:
+#                 flag_titulo = False
+#                 break  # deixar mais rápido, caso encontre antes.
+
+#         if flag_titulo:
+
+#             status = input('Digite o status da sua tarefa (pendente / concluída): ').strip().lower()
+#             if status == 'pendente' or 'concluida':
+#                 nova_tarefa = {'titulo':titulo, 'status':status}
+#                 tarefas.append(nova_tarefa)
+#                 salvar_json()
+#             else:
+#                 print('Status da sua tarefa está incorreto, por favor, escolha um dos dois: (pendente / concluída)')
+#                 redirecionar_menu() # Mudar a lógica
+#         else:
+#             limpar_terminal()
+#             print('O título da sua tarefa já existe, por favor, informar outro titulo.\nCaso precise revisar as tarefas existentes, aperte a tecla 2 no menu de opções.')
+#             redirecionar_menu()
+            
+#         redirecionar_menu()
 
 def listar_tarefas():
 
-    final_opcoes()
+    limpar_terminal()
     print(f'{'Título da Tarefa'.ljust(23)} | {'Status'.ljust(20)}')
 
     for tarefa in tarefas:
@@ -44,13 +106,17 @@ def listar_tarefas():
 
     redirecionar_menu()  
 
+def normalizar_caracteres(tarefa):
+    return tarefa.strip().lower()
+
 def alterar_titulo_tarefa():
 
-    nome_tarefa = input('Digite o titulo da tarefa: ')
+    nome_tarefa = input('Digite o titulo da tarefa: ').strip().lower()
     tarefa_encontrada = False
 
     for tarefa in tarefas:
-        if tarefa['titulo'] == nome_tarefa:
+        tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+        if tarefa_normalizada == nome_tarefa:
             tarefa_encontrada = True
             novo_titulo = input('Digite o novo título a tarefa: ')
             tarefa['titulo'] = novo_titulo
@@ -62,12 +128,13 @@ def alterar_titulo_tarefa():
     redirecionar_menu()
 
 def alterar_status_tarefa():
-    nome_tarefa = input('Digite o nome da tarefa que deseja alterar: ')
+    nome_tarefa = input('Digite o nome da tarefa que deseja alterar: ').strip().lower()
     tarefa_encontrada = False
 
     for tarefa in tarefas:
 
-        if tarefa['titulo'] == nome_tarefa:
+        tarefa_normalizada = normalizar_caracteres(tarefa['titulo'])
+        if tarefa_normalizada == nome_tarefa:
             tarefa_encontrada = True 
             tarefa['status'] = 'concluída' if tarefa['status'] == 'pendente' else 'pendente'
             salvar_json()
@@ -79,14 +146,25 @@ def alterar_status_tarefa():
     redirecionar_menu()
 
 def sair():
-    final_opcoes()
+    limpar_terminal()
     exibir_subtitulo('''
 ▄▀█ █▀█ █▀█   █▀▀ █▄ █ █▀▀ █▀▀ █▀█ █▀█ ▄▀█ █▀▄ █▀█ 
 █▀█ █▀▀ █▀▀   ██▄ █ ▀█ █▄▄ ██▄ █▀▄ █▀▄ █▀█ █▄▀ █▄█ ▄
 ''')
 
 def escolha_opcao():
-    escolha = int(input('Digite um número que corresponda as opções: '))
+
+    while True:
+    
+        try:
+            escolha = int(input('Digite um número que corresponda as opções: '))
+            break
+        except ValueError:
+            limpar_terminal()
+            print('O valor informado está incorreto, por favor, escolha uma das nossas opções em valor númerico.')
+            opcoes()
+
+
     match escolha:
 
         case 1:
@@ -103,8 +181,12 @@ def escolha_opcao():
         
         case 5:
             return sair()
+        
+        case _:
+            print(f'Valor digitado está incorreto, por favor, tente novamente com uma das nossas opções.')
+            redirecionar_menu()
 
-def final_opcoes():
+def limpar_terminal():
     os.system('cls')
 
 def salvar_json():
@@ -118,9 +200,10 @@ def carregar_json():
             tarefas = json.load(arquivo)
     except FileNotFoundError:
         tarefas = []
+
 def main():
    carregar_json()
-   final_opcoes()
+   limpar_terminal()
    exibir_nome()
    opcoes()
    escolha_opcao()
